@@ -1,0 +1,5 @@
+INSERT INTO role(name) VALUES ('ADMIN');
+INSERT INTO role(name) VALUES ('MANAGER');
+
+INSERT INTO privilege(name) VALUES ('UPDATE_VEHICLE');
+INSERT INTO privilege(name) VALUES ('REMOVE_VEHICLE');
