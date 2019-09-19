@@ -1,11 +1,9 @@
-package com.fleet.vehicle.controller;
+package com.fleet.vehicle;
 
-import com.fleet.vehicle.domain.VehicleColorDTO;
-import com.fleet.vehicle.domain.VehicleDTO;
 import com.fleet.exception.ConflictException;
 import com.fleet.exception.NotFoundException;
-import com.fleet.vehicle.service.VehicleService;
-import com.fleet.vehicle.validation.VehicleId;
+import com.fleet.vehicle.validation.VehicleIdValidation;
+import com.fleet.vehicle_color.VehicleColorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,7 +36,7 @@ public class VehicleController {
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public VehicleDTO findById(@PathVariable @VehicleId(message = INVALID_VEHICLE_ID_MESSAGE) final String id)
+    public VehicleDTO findById(@PathVariable @VehicleIdValidation(message = INVALID_VEHICLE_ID_MESSAGE) final String id)
             throws NotFoundException {
         VehicleDTO vehicleDTO = vehicleService.findById(id);
         return vehicleDTO;
@@ -57,7 +55,7 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.OK)
     @CacheEvict(cacheNames = VEHICLES_LIST_CACHE, allEntries = true)
     public VehicleDTO changeColor(@PathVariable
-                                  @VehicleId(message = INVALID_VEHICLE_ID_MESSAGE) final String id,
+                                  @VehicleIdValidation(message = INVALID_VEHICLE_ID_MESSAGE) final String id,
                                   @RequestBody final VehicleColorDTO vehicle)
             throws NotFoundException {
         VehicleDTO vehicleUpdated = vehicleService.changeColor(id, vehicle.getColor());
@@ -67,7 +65,7 @@ public class VehicleController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(cacheNames = VEHICLES_LIST_CACHE, allEntries = true)
-    public void deleteById(@PathVariable @VehicleId(message = INVALID_VEHICLE_ID_MESSAGE) final String id)
+    public void deleteById(@PathVariable @VehicleIdValidation(message = INVALID_VEHICLE_ID_MESSAGE) final String id)
             throws NotFoundException {
         vehicleService.deleteById(id);
     }

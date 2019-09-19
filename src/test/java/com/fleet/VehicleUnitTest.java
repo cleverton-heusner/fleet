@@ -2,11 +2,15 @@ package com.fleet;
 
 import com.fleet.exception.ConflictException;
 import com.fleet.exception.NotFoundException;
+import com.fleet.vehicle.VehicleDTO;
+import com.fleet.vehicle.VehicleDomain;
+import com.fleet.vehicle.VehicleIdDecodification;
+import com.fleet.vehicle.VehicleMapper;
 import com.fleet.vehicle.domain.*;
-import com.fleet.vehicle.repository.VehicleRepository;
-import com.fleet.vehicle.service.VehicleService;
+import com.fleet.vehicle.VehicleRepository;
+import com.fleet.vehicle.VehicleService;
 import com.fleet.vehicle.validation.VehicleValidationMessagesHandler;
-import com.fleet.vehicle_type.domain.VehicleType;
+import com.fleet.vehicle_type.VehicleType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -61,17 +65,17 @@ public class VehicleUnitTest {
     private ArgumentCaptor<VehicleDTO> vehicleDTOArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<Vehicle> vehicleArgumentCaptor;
+    private ArgumentCaptor<VehicleDomain> vehicleArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<Vehicle.VehicleId> vehicleIdArgumentCaptor;
+    private ArgumentCaptor<VehicleDomain.VehicleId> vehicleIdArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<String> vehicleCodedIdArgumentCaptor;
 
     @Test
     public void insertVehicleWhenDetaisAreValid() throws ConflictException {
-        Vehicle expectedVehicleDomain = getExpectedVehicleDomain().get();
+        VehicleDomain expectedVehicleDomain = getExpectedVehicleDomain().get();
 
         when(vehicleMapper.toDomain(EXPECTED_VEHICLE_DTO)).thenReturn(expectedVehicleDomain);
         when(vehicleRepository.existsById(expectedVehicleDomain.getId())).thenReturn(false);
@@ -99,23 +103,23 @@ public class VehicleUnitTest {
                 .build();
     }
 
-    private Optional<Vehicle> getExpectedVehicleDomain() {
-        Vehicle.VehicleId vehicleId = Vehicle.VehicleId.builder()
+    private Optional<VehicleDomain> getExpectedVehicleDomain() {
+        VehicleDomain.VehicleId vehicleId = VehicleDomain.VehicleId.builder()
                 .chassisNumber(123)
                 .chassisSeries("ABC")
                 .build();
 
-        Vehicle vehicle = Vehicle.builder()
+        VehicleDomain vehicleDomain = VehicleDomain.builder()
                 .id(vehicleId)
                 .color("white")
                 .type(VehicleType.fromName("Carro").get())
                 .build();
-        return Optional.of(vehicle);
+        return Optional.of(vehicleDomain);
     }
 
     @Test
     public void failToInsertVehicleWhenChassisIsInUse() throws ConflictException {
-        Vehicle expectedVehicleDomain = getExpectedVehicleDomain().get();
+        VehicleDomain expectedVehicleDomain = getExpectedVehicleDomain().get();
 
         when(vehicleMapper.toDomain(EXPECTED_VEHICLE_DTO)).thenReturn(expectedVehicleDomain);
         when(vehicleRepository.existsById(expectedVehicleDomain.getId())).thenReturn(true);
@@ -132,7 +136,7 @@ public class VehicleUnitTest {
 
     @Test
     public void findByIdWhenThereIsVehicle() throws NotFoundException {
-        Optional<Vehicle> expectedVehicleDomain = getExpectedVehicleDomain();
+        Optional<VehicleDomain> expectedVehicleDomain = getExpectedVehicleDomain();
 
         when(vehicleIdDecodification.decode(anyString())).thenReturn(expectedVehicleDomain.get().getId());
         when(vehicleRepository.findById(expectedVehicleDomain.get().getId())).thenReturn(expectedVehicleDomain);
@@ -160,8 +164,8 @@ public class VehicleUnitTest {
 
     @Test
     public void listWhenThereAreVehicles() {
-        Vehicle expectedVehicleDomain = getExpectedVehicleDomain().get();
-        Page<Vehicle> page = new PageImpl(Arrays.asList(expectedVehicleDomain));
+        VehicleDomain expectedVehicleDomain = getExpectedVehicleDomain().get();
+        Page<VehicleDomain> page = new PageImpl(Arrays.asList(expectedVehicleDomain));
         Pageable pagination = PageRequest.of(pageNum, pageSize, Sort.Direction.ASC, "id");
 
         when(vehicleRepository.findAll(pagination)).thenReturn(page);
@@ -187,7 +191,7 @@ public class VehicleUnitTest {
 
     @Test
     public void changeVehicleColorWhenDetailsAreValid() throws NotFoundException {
-        Optional<Vehicle> expectedVehicleDomain = getExpectedVehicleDomain();
+        Optional<VehicleDomain> expectedVehicleDomain = getExpectedVehicleDomain();
 
         when(vehicleIdDecodification.decode(anyString())).thenReturn(expectedVehicleDomain.get().getId());
         when(vehicleRepository.findById(expectedVehicleDomain.get().getId())).thenReturn(expectedVehicleDomain);
@@ -218,7 +222,7 @@ public class VehicleUnitTest {
 
     @Test
     public void deleteVehicleByIdWhenIdIsValid() throws NotFoundException {
-        Vehicle.VehicleId expectedVehicleId = getExpectedVehicleDomain().get().getId();
+        VehicleDomain.VehicleId expectedVehicleId = getExpectedVehicleDomain().get().getId();
 
         when(vehicleIdDecodification.decode(anyString())).thenReturn(expectedVehicleId);
         when(vehicleRepository.existsById(expectedVehicleId)).thenReturn(true);

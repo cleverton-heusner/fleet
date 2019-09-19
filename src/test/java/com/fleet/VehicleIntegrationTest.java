@@ -1,8 +1,8 @@
 package com.fleet;
 
-import com.fleet.vehicle.domain.Vehicle;
-import com.fleet.vehicle_type.domain.VehicleType;
-import com.fleet.vehicle.repository.VehicleRepository;
+import com.fleet.vehicle.VehicleDomain;
+import com.fleet.vehicle_type.VehicleType;
+import com.fleet.vehicle.VehicleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,19 +33,19 @@ public class VehicleIntegrationTest {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    private Vehicle expectedVehicle;
+    private VehicleDomain expectedVehicleDomain;
 
     @Before
     public void setUp() {
-        expectedVehicle = createExpectedVehicle();
+        expectedVehicleDomain = createExpectedVehicle();
     }
 
-    private Vehicle createExpectedVehicle() {
-        Vehicle.VehicleId vehicleId = Vehicle.VehicleId.builder()
+    private VehicleDomain createExpectedVehicle() {
+        VehicleDomain.VehicleId vehicleId = VehicleDomain.VehicleId.builder()
                 .chassisNumber(123)
                 .chassisSeries("ABC")
                 .build();
-        return Vehicle.builder()
+        return VehicleDomain.builder()
                 .id(vehicleId)
                 .color("red")
                 .passengersNumber((byte) 42)
@@ -55,23 +55,23 @@ public class VehicleIntegrationTest {
 
     @Test
     public void insertVehicleWhenDetailsIsValid() {
-        vehicleRepository.save(expectedVehicle);
+        vehicleRepository.save(expectedVehicleDomain);
 
-        Vehicle realVehicle = vehicleRepository.findById(expectedVehicle.getId()).get();
-        assertThat(realVehicle, is(equalTo(expectedVehicle)));
+        VehicleDomain realVehicleDomain = vehicleRepository.findById(expectedVehicleDomain.getId()).get();
+        assertThat(realVehicleDomain, is(equalTo(expectedVehicleDomain)));
     }
 
     @Test
     public void findVehicleWhenThereIsVehicle() {
         populateDatabase();
 
-        Vehicle realVehicle = vehicleRepository.findById(expectedVehicle.getId()).get();
+        VehicleDomain realVehicleDomain = vehicleRepository.findById(expectedVehicleDomain.getId()).get();
 
-        assertThat(realVehicle, is(equalTo(expectedVehicle)));
+        assertThat(realVehicleDomain, is(equalTo(expectedVehicleDomain)));
     }
 
     private void populateDatabase() {
-        entityManager.persist(expectedVehicle);
+        entityManager.persist(expectedVehicleDomain);
         entityManager.flush();
     }
 
@@ -79,31 +79,31 @@ public class VehicleIntegrationTest {
     public void listVehiclesWhenThereAreVehicles() {
         populateDatabase();
 
-        List<Vehicle> realVehicles = vehicleRepository.findAll();
+        List<VehicleDomain> realVehicleDomains = vehicleRepository.findAll();
 
-        List<Vehicle> expectedVehicles = Arrays.asList(expectedVehicle);
-        assertThat(realVehicles, is(equalTo(expectedVehicles)));
+        List<VehicleDomain> expectedVehiclesDomain = Arrays.asList(expectedVehicleDomain);
+        assertThat(realVehicleDomains, is(equalTo(expectedVehiclesDomain)));
     }
 
     @Test
     public void changeVehicleColorWhenThereIsVehicle() {
         populateDatabase();
 
-        Vehicle vehicle = vehicleRepository.findById(expectedVehicle.getId()).get();
-        vehicle.setColor(NEW_COLOR);
-        vehicleRepository.save(vehicle);
+        VehicleDomain vehicleDomain = vehicleRepository.findById(expectedVehicleDomain.getId()).get();
+        vehicleDomain.setColor(NEW_COLOR);
+        vehicleRepository.save(vehicleDomain);
 
-        Vehicle vehicleWithNewColor = vehicleRepository.findById(expectedVehicle.getId()).get();
-        assertThat(vehicleWithNewColor.getColor(), is(equalTo(NEW_COLOR)));
+        VehicleDomain vehicleDomainWithNewColor = vehicleRepository.findById(expectedVehicleDomain.getId()).get();
+        assertThat(vehicleDomainWithNewColor.getColor(), is(equalTo(NEW_COLOR)));
     }
 
     @Test
     public void removeVehicleByIdWhenThereIsVehicle() {
         populateDatabase();
 
-        vehicleRepository.deleteById(expectedVehicle.getId());
+        vehicleRepository.deleteById(expectedVehicleDomain.getId());
 
-        Optional<Vehicle> optionalVehicle = vehicleRepository.findById(expectedVehicle.getId());
+        Optional<VehicleDomain> optionalVehicle = vehicleRepository.findById(expectedVehicleDomain.getId());
         assertThat(optionalVehicle.isPresent(), is(false));
     }
 }

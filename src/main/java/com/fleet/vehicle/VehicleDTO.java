@@ -1,4 +1,4 @@
-package com.fleet.vehicle.domain;
+package com.fleet.vehicle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

@@ -1,7 +1,7 @@
-package com.fleet.vehicle.domain;
+package com.fleet.vehicle;
 
-import com.fleet.vehicle_type.domain.VehicleType;
-import com.fleet.vehicle_type.domain.VehicleTypeConverter;
+import com.fleet.vehicle_type.VehicleType;
+import com.fleet.vehicle_type.VehicleTypeConverter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Entity
 @Table(name = "vehicle")
-public class Vehicle {
+public class VehicleDomain {
 
     @EmbeddedId
     private VehicleId id;

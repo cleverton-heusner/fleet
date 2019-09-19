@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class VehicleIdValidator implements ConstraintValidator<VehicleId, String> {
+public class VehicleIdValidator implements ConstraintValidator<VehicleIdValidation, String> {
 
     public static final String VEHICLE_ID_SPLITTER = "_";
     private final String CHASSIS_SERIES = ".+";

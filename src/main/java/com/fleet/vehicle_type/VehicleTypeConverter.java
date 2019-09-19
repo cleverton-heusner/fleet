@@ -1,7 +1,5 @@
-package com.fleet.vehicle_type.domain;
+package com.fleet.vehicle_type;
 
-
-import com.fleet.vehicle_type.domain.VehicleType;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

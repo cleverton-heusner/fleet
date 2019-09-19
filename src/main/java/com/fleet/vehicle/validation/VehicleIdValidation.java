@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = VehicleIdValidator.class)
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface VehicleId {
+public @interface VehicleIdValidation {
 
     String message();
 

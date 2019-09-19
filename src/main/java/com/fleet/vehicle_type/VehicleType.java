@@ -1,4 +1,4 @@
-package com.fleet.vehicle_type.domain;
+package com.fleet.vehicle_type;
 
 import lombok.Getter;
 

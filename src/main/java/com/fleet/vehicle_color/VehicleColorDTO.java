@@ -1,4 +1,4 @@
-package com.fleet.vehicle.domain;
+package com.fleet.vehicle_color;
 
 import lombok.Data;
 
