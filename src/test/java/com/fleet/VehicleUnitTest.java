@@ -46,7 +46,7 @@ public class VehicleUnitTest {
     private VehicleService vehicleService;
 
     @Mock
-    private VehicleMapper vehicleConverter;
+    private VehicleMapper vehicleMapper;
 
     @Mock
     private VehicleRepository vehicleRepository;
@@ -73,20 +73,20 @@ public class VehicleUnitTest {
     public void insertVehicleWhenDetaisAreValid() throws ConflictException {
         Vehicle expectedVehicleDomain = getExpectedVehicleDomain().get();
 
-        when(vehicleConverter.toDomain(EXPECTED_VEHICLE_DTO)).thenReturn(expectedVehicleDomain);
+        when(vehicleMapper.toDomain(EXPECTED_VEHICLE_DTO)).thenReturn(expectedVehicleDomain);
         when(vehicleRepository.existsById(expectedVehicleDomain.getId())).thenReturn(false);
         when(vehicleRepository.save(expectedVehicleDomain)).thenReturn(expectedVehicleDomain);
-        when(vehicleConverter.toDTO(expectedVehicleDomain)).thenReturn(EXPECTED_VEHICLE_DTO);
+        when(vehicleMapper.toDTO(expectedVehicleDomain)).thenReturn(EXPECTED_VEHICLE_DTO);
 
         vehicleService.insert(EXPECTED_VEHICLE_DTO);
 
-        verify(vehicleConverter, times(1)).toDomain(vehicleDTOArgumentCaptor.capture());
+        verify(vehicleMapper, times(1)).toDomain(vehicleDTOArgumentCaptor.capture());
         assertThat(vehicleDTOArgumentCaptor.getValue(), is(equalTo(EXPECTED_VEHICLE_DTO)));
         verify(vehicleRepository, times(1)).existsById(vehicleIdArgumentCaptor.capture());
         assertThat(vehicleIdArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain.getId())));
         verify(vehicleRepository, times(1)).save(vehicleArgumentCaptor.capture());
         assertThat(vehicleArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain)));
-        verify(vehicleConverter, times(1)).toDTO(vehicleArgumentCaptor.capture());
+        verify(vehicleMapper, times(1)).toDTO(vehicleArgumentCaptor.capture());
         assertThat(vehicleArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain)));
     }
 
@@ -117,7 +117,7 @@ public class VehicleUnitTest {
     public void failToInsertVehicleWhenChassisIsInUse() throws ConflictException {
         Vehicle expectedVehicleDomain = getExpectedVehicleDomain().get();
 
-        when(vehicleConverter.toDomain(EXPECTED_VEHICLE_DTO)).thenReturn(expectedVehicleDomain);
+        when(vehicleMapper.toDomain(EXPECTED_VEHICLE_DTO)).thenReturn(expectedVehicleDomain);
         when(vehicleRepository.existsById(expectedVehicleDomain.getId())).thenReturn(true);
         when(vehicleValidationMessages.getChassisInUse()).thenReturn(MESSAGE_CHASSIS_IN_USE);
 
@@ -136,7 +136,7 @@ public class VehicleUnitTest {
 
         when(vehicleIdDecodification.decode(anyString())).thenReturn(expectedVehicleDomain.get().getId());
         when(vehicleRepository.findById(expectedVehicleDomain.get().getId())).thenReturn(expectedVehicleDomain);
-        when(vehicleConverter.toDTO(expectedVehicleDomain.get())).thenReturn(EXPECTED_VEHICLE_DTO);
+        when(vehicleMapper.toDTO(expectedVehicleDomain.get())).thenReturn(EXPECTED_VEHICLE_DTO);
 
         vehicleService.findById(VEHICLE_ID);
 
@@ -144,7 +144,7 @@ public class VehicleUnitTest {
         assertThat(vehicleCodedIdArgumentCaptor.getValue(), is(equalTo(VEHICLE_ID)));
         verify(vehicleRepository, times(1)).findById(vehicleIdArgumentCaptor.capture());
         assertThat(vehicleIdArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain.get().getId())));
-        verify(vehicleConverter, times(1)).toDTO(vehicleArgumentCaptor.capture());
+        verify(vehicleMapper, times(1)).toDTO(vehicleArgumentCaptor.capture());
         assertThat(vehicleArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain.get())));
     }
 
@@ -165,12 +165,12 @@ public class VehicleUnitTest {
         Pageable pagination = PageRequest.of(pageNum, pageSize, Sort.Direction.ASC, "id");
 
         when(vehicleRepository.findAll(pagination)).thenReturn(page);
-        when(vehicleConverter.toDTO(expectedVehicleDomain)).thenReturn(EXPECTED_VEHICLE_DTO);
+        when(vehicleMapper.toDTO(expectedVehicleDomain)).thenReturn(EXPECTED_VEHICLE_DTO);
 
         vehicleService.list(pagination);
 
         verify(vehicleRepository, times(1)).findAll(pagination);
-        verify(vehicleConverter, times(1)).toDTO(vehicleArgumentCaptor.capture());
+        verify(vehicleMapper, times(1)).toDTO(vehicleArgumentCaptor.capture());
         assertThat(vehicleArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain)));
     }
 
@@ -182,7 +182,7 @@ public class VehicleUnitTest {
         vehicleService.list(pagination);
 
         verify(vehicleRepository, times(1)).findAll(pagination);
-        verify(vehicleConverter, never()).toDTO(getExpectedVehicleDomain().get());
+        verify(vehicleMapper, never()).toDTO(getExpectedVehicleDomain().get());
     }
 
     @Test
@@ -192,7 +192,7 @@ public class VehicleUnitTest {
         when(vehicleIdDecodification.decode(anyString())).thenReturn(expectedVehicleDomain.get().getId());
         when(vehicleRepository.findById(expectedVehicleDomain.get().getId())).thenReturn(expectedVehicleDomain);
         when(vehicleRepository.save(expectedVehicleDomain.get())).thenReturn(expectedVehicleDomain.get());
-        when(vehicleConverter.toDTO(expectedVehicleDomain.get())).thenReturn(EXPECTED_VEHICLE_DTO);
+        when(vehicleMapper.toDTO(expectedVehicleDomain.get())).thenReturn(EXPECTED_VEHICLE_DTO);
 
         vehicleService.changeColor(VEHICLE_ID, NEW_COLOR);
 
@@ -202,7 +202,7 @@ public class VehicleUnitTest {
         assertThat(vehicleIdArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain.get().getId())));
         verify(vehicleRepository, times(1)).save(vehicleArgumentCaptor.capture());
         assertThat(vehicleArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain.get())));
-        verify(vehicleConverter, times(1)).toDTO(vehicleArgumentCaptor.capture());
+        verify(vehicleMapper, times(1)).toDTO(vehicleArgumentCaptor.capture());
         assertThat(vehicleArgumentCaptor.getValue(), is(equalTo(expectedVehicleDomain.get())));
     }
 

@@ -1,11 +1,11 @@
 package com.fleet.vehicle.service;
 
-import com.fleet.vehicle.domain.Vehicle;
-import com.fleet.vehicle.domain.VehicleMapper;
-import com.fleet.vehicle.domain.VehicleDTO;
-import com.fleet.vehicle.domain.VehicleIdDecodification;
 import com.fleet.exception.ConflictException;
 import com.fleet.exception.NotFoundException;
+import com.fleet.vehicle.domain.Vehicle;
+import com.fleet.vehicle.domain.VehicleDTO;
+import com.fleet.vehicle.domain.VehicleIdDecodification;
+import com.fleet.vehicle.domain.VehicleMapper;
 import com.fleet.vehicle.repository.VehicleRepository;
 import com.fleet.vehicle.validation.VehicleValidationMessagesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class VehicleService {
 
     @Autowired
-    private VehicleMapper vehicleConverter;
+    private VehicleMapper vehicleMapper;
 
     @Autowired
     private VehicleRepository vehicleRepository;
@@ -31,14 +31,14 @@ public class VehicleService {
     private VehicleIdDecodification vehicleIdDecodification;
 
     public VehicleDTO insert(final VehicleDTO vehicleDTO) throws ConflictException {
-        Vehicle vehicleToInsert = vehicleConverter.toDomain(vehicleDTO);
+        Vehicle vehicleToInsert = vehicleMapper.toDomain(vehicleDTO);
 
         if (vehicleRepository.existsById(vehicleToInsert.getId())) {
             throw new ConflictException(vehicleValidationMessagesHandler.getChassisInUse());
         }
 
         Vehicle insertedVehicle = vehicleRepository.save(vehicleToInsert);
-        return vehicleConverter.toDTO(insertedVehicle);
+        return vehicleMapper.toDTO(insertedVehicle);
     }
 
     public VehicleDTO findById(final String id) throws NotFoundException {
@@ -48,12 +48,12 @@ public class VehicleService {
             throw new NotFoundException(vehicleValidationMessagesHandler.getNotFound());
         }
 
-        return vehicleConverter.toDTO(vehicle.get());
+        return vehicleMapper.toDTO(vehicle.get());
     }
 
     public Page<VehicleDTO> list(final Pageable pagination) {
         Page<Vehicle> vehiclesPage = vehicleRepository.findAll(pagination);
-        return vehiclesPage.map(vehicle -> vehicleConverter.toDTO(vehicle));
+        return vehiclesPage.map(vehicle -> vehicleMapper.toDTO(vehicle));
     }
 
     public VehicleDTO changeColor(final String id, final String newColor) throws NotFoundException {
@@ -66,7 +66,7 @@ public class VehicleService {
         Vehicle vehicle = optionalVehicle.get();
         vehicle.setColor(newColor);
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
-        return vehicleConverter.toDTO(updatedVehicle);
+        return vehicleMapper.toDTO(updatedVehicle);
     }
 
     public void deleteById(final String id) throws NotFoundException {
